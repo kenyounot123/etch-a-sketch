@@ -1,48 +1,52 @@
 
-const gridSize = 600;
+const GRID_SIZE = 600;
+const playingField = document.getElementById('playingGrid');
+const sliderValue = document.getElementById('sliderValue');
+const sliderSize = document.getElementById('sizeSlider');
+
+createSketchboard(16);
+sliderSize.addEventListener('change', sliderChanged);
+
 
 function createSketchboard(size) {
-  let rowByColumn = gridSize / size;
+  let rowByColumn = GRID_SIZE / size;
   makeRows(rowByColumn);
   return; 
 }
-
-
-
 function makeRows(numberOfGrids) {
-  gridDimension = numberOfGrids - 2; 
-  const playingField = document.getElementById('playingGrid');
-  for (let i = 0; i < (gridSize / numberOfGrids); i++){
+  gridDimension = numberOfGrids;
+  for (let i = 0; i < (Math.floor(GRID_SIZE / numberOfGrids)); i++){
     const rowContainer = document.createElement('div');
     rowContainer.classList.add('rowContainer');
-    for (j = 0; j < (gridSize / numberOfGrids); j++) {
+    for (j = 0; j < (Math.floor(GRID_SIZE / numberOfGrids)); j++) {
       const rowGrids = document.createElement('div');
       rowGrids.classList.toggle('grid');
+      rowGrids.classList.add('needToRemove');
       rowGrids.style.height = `${gridDimension}px`;
       rowGrids.style.width = `${gridDimension}px`;
       rowContainer.appendChild(rowGrids);
     }
     playingField.appendChild(rowContainer);
   }
+  const allRows = document.querySelectorAll('.grid');
+  allRows.forEach((row) => row.addEventListener('mouseover', gridWhenHovered));
+
 }
 
-/*
-Create 16x16 grid 
-think of a div or container as a single grid or square.
-
-To make a row  {
-  get playing field size and divide by rowByColumn to adjust size of grids
-  create a div as a parent container 
-  create a div and give it the class 'grid'
-  append to parent container
-  display parent container as flex
+function gridWhenHovered(e) {
+  e.target.style.backgroundColor = 'black';
 }
 
-*/
-/*
-const createPlayingField = document.createElement('div')
-createPlayingField.setAttribute('id', 'playingGrid')
-createPlayingField.style.height = `${gridSize}px`;
-createPlayingField.style.width = `${gridSize}px`;
-document.body.appendChild(createPlayingField);
-*/
+
+function sliderChanged(e) {
+  resetGrid();
+  sliderValue.innerText = `${e.target.value}x${e.target.value}`;
+  let newGridSize = e.target.value;
+  createSketchboard(newGridSize);
+}
+
+function resetGrid() {
+  let removeGrids = document.querySelectorAll('.needToRemove');
+  console.log(removeGrids);
+  removeGrids.forEach((grid) => grid.remove());
+}
